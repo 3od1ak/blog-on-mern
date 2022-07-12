@@ -4,7 +4,7 @@ import Jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 
-import { registerValidation } from './validations/auth.js';
+import { registerValidatior } from './validations/auth.js';
 
 import UserModel from './models/user.js';
 
@@ -23,7 +23,7 @@ const app = express();
 app.use(express.json());
 //  позволяет читать json, который будет приходить в запросы
 
-app.post('/auth/register', registerValidation, async (req, res) => {
+app.post('/auth/register', registerValidatior, async (req, res) => {
   // если придёт запрос на эту страницу, проверит, есть ли в нём registerValidation,
   // и если есть - функция пойдёт дальше
 
