@@ -40,14 +40,14 @@ app.post('/auth/register', registerValidatior, async (req, res) => {
 
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, salt);
     // шифрование пароля в переменной passwordHash
 
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       avatarUrl: req.body.avatarUrl,
-      passwordHash,
+      passwordHash: hash,
     });
     // подготовка документа на создание пользователя
 
@@ -68,8 +68,12 @@ app.post('/auth/register', registerValidatior, async (req, res) => {
     );
     //
 
+    const { passwordHash, ...userData } = user._doc;
+    //  вытаскиваем из user._doc - passwordHash, но использоваться не будет
+
     res.json({
-      ...user,
+      ...userData,
+      // вернуть только значение doc
       token,
       // возвращаем информацию о пользователе и сам токен
     });
