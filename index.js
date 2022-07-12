@@ -43,7 +43,38 @@ app.post('/auth/login', async (req, res) => {
       return res.status(404).json({ message: 'Неверный логин или пароль' });
       // если пароль, введенный и проверенный выше - не сходятится с тем, что хранится в БД - оповещать его об этом
     }
-  } catch (error) {}
+
+    const token = Jwt.sign(
+      {
+        _id: user._id,
+        // какую информацию шифруем
+      },
+      'secret123',
+      // ключ шифрования токена
+      {
+        expiresIn: '30d',
+        // через какое время токен перестанет быть валидным
+      },
+    );
+    // создает токен регистрации пользователя в БД
+
+    const { passwordHash, ...userData } = user._doc;
+    //  вытаскиваем из user._doc - passwordHash, но использоваться не будет
+
+    res.json({
+      ...userData,
+      // вернуть только значение doc
+      token,
+
+      // возвращаем информацию о пользователе и сам токен
+    });
+    // если ошибок нет - вернуть успех
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Не удалось авторизоваться',
+    });
+  }
 });
 
 app.post('/auth/register', registerValidatior, async (req, res) => {
