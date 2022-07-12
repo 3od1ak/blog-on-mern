@@ -57,14 +57,21 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     const token = Jwt.sign(
       {
         _id: user._id,
+        // какую информацию шифруем
       },
       'secret123',
-      {},
+      // ключ шифрования токена
+      {
+        expiresIn: '30d',
+        // через какое время токен перестанет быть валидным
+      },
     );
     //
 
     res.json({
-      user,
+      ...user,
+      token,
+      // возвращаем информацию о пользователе и сам токен
     });
     // если ошибок нет - вернуть успех
   } catch (error) {
