@@ -23,6 +23,29 @@ const app = express();
 app.use(express.json());
 //  позволяет читать json, который будет приходить в запросы
 
+app.post('/auth/login', async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email });
+    // найти в базе данных пользователя с вводимой почтой
+
+    if (!user) {
+      return req.status(404).json({ message: 'Пользователь не найден' });
+      // если в user не найден пользователь, высвечиваем пользователю сообщение о том, что его аккаунт не найден
+    }
+
+    const isValidPass = await bcrypt.compare(req.body.password, user._doc.passwordHash);
+    // если пользователь нашёлся выше, проверить его пароль в БД с тем, что он прислал
+    // проверяются два параметра:
+    // req.body.password - пароль в теле запроса от пользователя,
+    // user._doc.passwordHash - пароль в документе (до есть в БД)
+
+    if (!isValidPass) {
+      return res.status(404).json({ message: 'Неверный логин или пароль' });
+      // если пароль, введенный и проверенный выше - не сходятится с тем, что хранится в БД - оповещать его об этом
+    }
+  } catch (error) {}
+});
+
 app.post('/auth/register', registerValidatior, async (req, res) => {
   // если придёт запрос на эту страницу, проверит, есть ли в нём registerValidation,
   // и если есть - функция пойдёт дальше
@@ -66,7 +89,6 @@ app.post('/auth/register', registerValidatior, async (req, res) => {
         // через какое время токен перестанет быть валидным
       },
     );
-    //
 
     const { passwordHash, ...userData } = user._doc;
     //  вытаскиваем из user._doc - passwordHash, но использоваться не будет
