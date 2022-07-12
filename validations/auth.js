@@ -1,4 +1,4 @@
-import { body } from 'express-validatior';
+import { body } from 'express-validator';
 
 export const registerValidatior = [
   body('email').isEmail(),
@@ -9,6 +9,6 @@ export const registerValidatior = [
   body('avatarUrl')
     .optional()
     // необязательное поле
-    .isUrl(),
+    .isURL(),
   // но если поле будет заполнено, проверить, является ли оно ссылкой
 ];
