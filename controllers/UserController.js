@@ -1,6 +1,5 @@
 import Jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { check, validationResult } from 'express-validator';
 
 import UserModel from '../models/User.js';
 
@@ -9,16 +8,6 @@ export const register = async (req, res) => {
   // и если есть - функция пойдёт дальше
 
   try {
-    const errors = validationResult(req);
-
-    if (
-      !errors.isEmpty()
-      // если ошибки "не пустые"
-    ) {
-      return res.status(400).json(errors.array());
-      // вернуть все ошибки, которые смог провалидировать
-    }
-
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
