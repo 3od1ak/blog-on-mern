@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import { registerValidatior } from './validations/auth.js';
+import { loginValidatior } from './validations/login.js';
 
 import checkAuth from './utils/checkAuth.js';
 
@@ -22,7 +23,7 @@ const app = express();
 app.use(express.json());
 //  позволяет читать json, который будет приходить в запросы
 
-app.post('/auth/login', UserController.login);
+app.post('/auth/login', loginValidatior, UserController.login);
 
 app.post('/auth/register', registerValidatior, UserController.register);
 
