@@ -3,10 +3,12 @@ import mongoose from 'mongoose';
 
 import { registerValidatior } from './validations/auth.js';
 import { loginValidatior } from './validations/login.js';
+import { postCreateValidatior } from './validations/post.js';
 
 import checkAuth from './utils/checkAuth.js';
 
 import * as UserController from './controllers/UserController.js';
+import { create, getAll, getOne, remove, update } from './controllers/PostControllers.js';
 
 const port = 3000;
 
@@ -28,6 +30,17 @@ app.post('/auth/login', loginValidatior, UserController.login);
 app.post('/auth/register', registerValidatior, UserController.register);
 
 app.get('/auth/me', checkAuth, UserController.getMe);
+
+app.get('/posts', getAll);
+// - получение всех статей
+app.post('/posts', checkAuth, postCreateValidatior, create);
+// - создание статьи
+app.get('/posts/:id', getOne);
+// - получение одной статьи, :id - динамический параметп
+app.delete('/posts/:id', checkAuth, remove);
+// - удаление статьи
+app.patch('/posts/:id', update);
+// - обновление статьи
 
 app.listen(port, (err) => {
   // слушатель событий на порте 3000 (port)
