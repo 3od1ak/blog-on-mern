@@ -6,11 +6,8 @@ import { registerValidatior } from './validations/register.js';
 import { loginValidatior } from './validations/login.js';
 import { postCreateValidatior } from './validations/post.js';
 
-import checkAuth from './utils/checkAuth.js';
-
-import * as UserController from './controllers/UserController.js';
-import { create, getAll, getOne, remove, update } from './controllers/PostControllers.js';
-import handleValidationsErrors from './utils/handleValidationsErrors.js';
+import { UserController, PostController } from './controllers/index.js';
+import { handleValidationsErrors, checkAuth } from './utils/index.js';
 
 const port = 3000;
 
@@ -72,15 +69,21 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 });
 
 // <-- Роуты постов
-app.get('/posts', getAll);
+app.get('/posts', PostController.getAll);
 // получение всех статей
-app.get('/posts/:id', getOne);
+app.get('/posts/:id', PostController.getOne);
 // получение одной статьи, :id - динамический параметп
-app.post('/posts', checkAuth, postCreateValidatior, handleValidationsErrors, create);
+app.post('/posts', checkAuth, postCreateValidatior, handleValidationsErrors, PostController.create);
 // создание статьи
-app.delete('/posts/:id', checkAuth, remove);
+app.delete('/posts/:id', checkAuth, PostController.remove);
 // удаление статьи
-app.patch('/posts/:id', checkAuth, postCreateValidatior, handleValidationsErrors, update);
+app.patch(
+  '/posts/:id',
+  checkAuth,
+  postCreateValidatior,
+  handleValidationsErrors,
+  PostController.update,
+);
 // обновление статьи
 // <-- Роуты постов
 
