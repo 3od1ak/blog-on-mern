@@ -1,12 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Jwt from 'jsonwebtoken';
-import { validationResult } from 'express-validator';
+import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 
 import { registerValidatior } from './validations/auth.js';
 
 import UserModel from './models/user.js';
+import checkAuth from './utils/checkAuth.js';
 
 const port = 3000;
 
@@ -135,6 +136,30 @@ app.post('/auth/register', registerValidatior, async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: 'Не удалось зарегистрироваться',
+    });
+  }
+});
+
+app.get('/auth/me', checkAuth, async function (req, res) {
+  // если дан запрос на /auth/me, checkAuth решает, нужно ли выполнение дальнейшей функции
+  // next() в checkAuth как раз отвечает за успех и дальнейшее выполнение функции
+
+  try {
+    const user = await UserModel.findById(req.userId);
+    // UserModel должен вытащить пользователя по его userId
+
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    const { passwordHash, ...userData } = user._doc;
+    // _doc - даннные пользователя из БД
+
+    res.json(userData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Нет доступа',
     });
   }
 });
