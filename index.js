@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
 
-import { registerValidatior } from './validations/auth.js';
+import { registerValidatior } from './validations/register.js';
 import { loginValidatior } from './validations/login.js';
 import { postCreateValidatior } from './validations/post.js';
 
