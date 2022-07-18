@@ -10,12 +10,10 @@ import { postCreateValidatior } from './validations/post.js'
 import { UserController, PostController } from './controllers/index.js'
 import { handleValidationsErrors, checkAuth } from './utils/index.js'
 
-const port = 3000
+const port = process.env.PORT || 4444
 
 mongoose
-	.connect(
-		'mongodb+srv://admin:12114365ss@cluster0.i6wqn.mongodb.net/blog?retryWrites=true&w=majority'
-	)
+	.connect(process.env.MONGODB_URI)
 	.then(() => console.log('DB ok'))
 	.catch(err => console.log('DB error' + err.message))
 
