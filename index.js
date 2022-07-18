@@ -2,6 +2,8 @@ import express from 'express'
 import mongoose from 'mongoose'
 import multer from 'multer'
 import cors from 'cors'
+import dotenv from 'dotenv'
+dotenv.config()
 
 import { registerValidatior } from './validations/register.js'
 import { loginValidatior } from './validations/login.js'
@@ -15,7 +17,7 @@ const port = process.env.PORT || 4444
 mongoose
 	.connect(process.env.MONGODB_URI)
 	.then(() => console.log('DB ok'))
-	.catch(err => console.log('DB error' + err.message))
+	.catch(err => console.log('DB error: ' + err.message))
 
 const app = express()
 // создание Express-приложения. Вся логика Express хранится в этой переменной
