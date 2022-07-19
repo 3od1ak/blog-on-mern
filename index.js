@@ -1,4 +1,5 @@
 import express from 'express'
+import fs from 'fs'
 import mongoose from 'mongoose'
 import multer from 'multer'
 import cors from 'cors'
@@ -26,6 +27,9 @@ const storage = multer.diskStorage({
 	// создаем хранилище для мультера
 	destination: (_, __, cb) => {
 		// функция объясняет, какой путь нужно использовать
+		if (!fs.existsSync('uploads')) {
+			fs.mkdirSync('uploads')
+		}
 		cb(null, 'uploads')
 		// функция не получает никаких ошибок
 		// сохранить загруженные файлы в папку uploads
@@ -39,7 +43,6 @@ const storage = multer.diskStorage({
 		// file.originalname - вытащить из file оригинальное название
 	},
 })
-app.use(cors())
 // хранилище для всех картинок
 
 const upload = multer({ storage })
@@ -49,6 +52,7 @@ app.use(express.json())
 //  позволяет читать json, который будет приходить в запросы
 app.use('/uploads', express.static('uploads'))
 // сказать Express, что если придет любой запрос на /uploads, с помощью статической функции проверить, есть ли в этой папке то, что передается в запросе роута
+app.use(cors())
 
 // --> Роуты аккаунта
 app.post(
@@ -79,6 +83,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 })
 
 // <-- Роуты постов
+app.get('/tags', PostController.getLastTags)
 app.get('/posts', PostController.getAll)
 // получение всех статей
 app.get('/posts/:id', PostController.getOne)
